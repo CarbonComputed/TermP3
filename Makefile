@@ -1,5 +1,5 @@
 #
-# Created by makemake (Darwin Feb 22 2012) on Thu Feb 23 02:55:39 2012
+# Created by makemake (Darwin Feb 22 2012) on Mon Mar 12 11:27:59 2012
 #
 
 #
@@ -48,13 +48,13 @@ CCLIBFLAGS =
 ########## End of default flags
 
 
-CPP_FILES =	library.cpp main.cpp music_list.cpp play_queue.cpp playlist.cpp song.cpp
+CPP_FILES =	id3.cpp library.cpp main.cpp music_list.cpp play_queue.cpp playlist.cpp song.cpp
 C_FILES =	
 S_FILES =	
-H_FILES =	library.h music_list.h play_queue.h playlist.h song.h
+H_FILES =	defines.h id3.h library.h music_list.h play_queue.h playlist.h song.h
 SOURCEFILES =	$(H_FILES) $(CPP_FILES) $(C_FILES) $(S_FILES)
 .PRECIOUS:	$(SOURCEFILES)
-OBJFILES =	library.o music_list.o play_queue.o playlist.o song.o 
+OBJFILES =	id3.o library.o music_list.o play_queue.o playlist.o song.o 
 
 #
 # Main targets
@@ -70,12 +70,13 @@ ${BINDIR}/main:	main.o $(OBJFILES)
 # Dependencies
 #
 
-library.o:	library.h music_list.h song.h
-main.o:	music_list.h song.h
-music_list.o:	music_list.h song.h
-play_queue.o:	play_queue.h song.h
-playlist.o:	music_list.h playlist.h song.h
-song.o:	song.h
+id3.o:	id3.h
+library.o:	defines.h id3/id3.h library.h music_list.h song.h
+main.o:	defines.h id3/id3.h library.h music_list.h song.h
+music_list.o:	id3/id3.h music_list.h song.h
+play_queue.o:	id3/id3.h music_list.h play_queue.h song.h
+playlist.o:	id3/id3.h music_list.h playlist.h song.h
+song.o:	id3/id3.h song.h
 
 #
 # Housekeeping
