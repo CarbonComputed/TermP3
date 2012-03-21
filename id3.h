@@ -23,6 +23,19 @@ struct ID3v1{
 
 };
 
+struct ID3v2_header{
+  char ID3[3];
+  char ver[2];
+  char junk[5];
+};
+
+
+struct ID3v2_frame{
+  char id[4];
+  int size;
+  char flags[2];
+};
+
 ID3v1 readID3(string file);
 #endif
 

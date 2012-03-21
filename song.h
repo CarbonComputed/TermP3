@@ -20,7 +20,7 @@ class Song {
    string get_metadata(string str) const;
    void add_metadata(string,string);
    ID3v1 get_ID3() const;
-   Song(ID3v1 id3);		
+   Song(ID3v1 id3, string path);		
 };
 
 #endif

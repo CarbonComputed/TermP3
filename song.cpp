@@ -1,7 +1,6 @@
 #include "song.h"
 
-Song::Song(ID3v1 id3){
-  id3_data_ = id3;
+Song::Song(ID3v1 id3,string path): id3_data_(id3), path_(path){
 }
 
 string Song::get_path() const{
