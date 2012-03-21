@@ -1,7 +1,12 @@
 Compile using make
-In Progress
+irrKlang may need some adjusting to compile, mp3 is supported, but will be dealt with after a usable UI is created.
+
+Currently only Linux is supported.
+
 
 TODO:
-Add UI using Curses library.
-Implement mp3 playing functionality.
+Add UI using ncurses library.
+Player class (ability to play and pause)
+Link UI with model.
+Make cross platform (file reader is not, but can easily be made to be).
 
