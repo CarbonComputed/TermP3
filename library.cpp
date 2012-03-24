@@ -51,11 +51,17 @@ int Library::scan(){
             size_t found = str.find_last_of(".");
             type = str.substr(found+1);
             if(type == "mp3"){
-              this->push_back(Song(readID3(str),str));
-              string title = this->at(size()-1).get_ID3().title; 
-              title += "\0";
-              
-              cout<<title.substr(0,30)<<"----"<<str<<endl;
+              Song s = Song(readID3(str),str);
+              if(s.get_ID3().title[0] == '\0' || s.get_ID3().header == ""){
+                s.set_ID3v2(readID3v2(str)); 
+                cout<<s.get_ID3v2().frames["TIT2"].data<<endl;
+              }
+              this->push_back(s);
+              string title;
+              title += s.get_ID3().title; 
+             // title += "\0";
+               
+              cout<<s.get_ID3().header[0]<<" "<<title<<"----"<<str<<endl;
             }
              
           }

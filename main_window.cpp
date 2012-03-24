@@ -1,11 +1,18 @@
 #include <curses.h>
+#include <menu.h>
 #include <cstring>
 #include <string>
+#include <vector>
+#include <stdlib.h>
+
+#include "song.h"
 
 using namespace std;
 
-int read_line(char *buffer){
-  string buf = ":";
+
+int read_line(char input,char *buffer){
+  string buf = "";
+  buf += input;
   int pos = 1;
   mvaddch(LINES-1,pos-1,':');
   move(LINES-1,pos);
@@ -21,7 +28,7 @@ int read_line(char *buffer){
         buf.erase(pos);
         break;
       case '\n':
-        strcpy(buffer,buf.substr(1).c_str());
+        strcpy(buffer,buf.c_str());
         return OK;
       case KEY_LEFT:
         if(pos==0){
@@ -50,6 +57,15 @@ int read_line(char *buffer){
   return OK;
 }
 
+void init_song_menu(vector<Song> songs){
+  int nsongs = (int) songs.size();
+  ITEM **items;
+  items = (ITEM **)calloc(nsongs,sizeof(ITEM *));
+  for(int i = 0; i < nsongs; i++){
+     
+  }  
+}
+
 int main(int argc, char* argv[]){
   initscr();
   cbreak();
@@ -67,9 +83,9 @@ int main(int argc, char* argv[]){
         break;
       case ((int)':'):
         char buf[80];
-        read_line(buf);
+        read_line(':',buf);
         deleteln();
-        printw(buf);
+//        printw(buf);
         break;
     }
   }

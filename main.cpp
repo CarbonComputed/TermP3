@@ -7,10 +7,10 @@
 using namespace std;
 
 int main(int args, char* argv[]){
-//	Song m;
-//	m.add_metadata("track", "blah.mp3");
+//  Song m;
+//  m.add_metadata("track", "blah.mp3");
 //    m.add_metadata("track", "blah2.mp3");
-//	cout << m.get_metadata("track")<<endl;
+//  cout << m.get_metadata("track")<<endl;
     MusicList list;
 //    list.push_back(m);
     Library lib("kevin");
@@ -18,5 +18,5 @@ int main(int args, char* argv[]){
     lib.scan();
     cout<<lib.size()<<endl;
 //    cout<<list.at(0).get_metadata("track")<<endl;
-	return 0;
+  return 0;
 }

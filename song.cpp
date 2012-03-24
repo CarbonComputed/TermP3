@@ -18,3 +18,11 @@ void Song::add_metadata(string key, string val){
 ID3v1 Song::get_ID3() const{
   return this->id3_data_;
 }
+
+ID3v2 Song::get_ID3v2() const{
+  return this->id3v2_data_;
+}
+
+void Song::set_ID3v2(ID3v2 id3v2){
+  this->id3v2_data_ = id3v2;
+}
