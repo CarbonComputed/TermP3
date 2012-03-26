@@ -11,9 +11,8 @@ using namespace std;
 //Contains the properties and data of a given song
 class Song {
  private:
-   map < string , string > metadata_;
-   string path_;
    ID3v1 id3_data_;
+   string path_;
    ID3v2 id3v2_data_;
 
  public:

@@ -20,7 +20,6 @@ vector<string> Library::get_paths() const{
 
 int Library::scan(){
   unsigned char is_folder = 0x4;
-  unsigned char is_file = 0x8;
   vector<string> stack_sim;
   vector<string>::iterator path;
   for(path = search_paths_.begin(); path != search_paths_.end(); path++){
@@ -52,16 +51,16 @@ int Library::scan(){
             type = str.substr(found+1);
             if(type == "mp3"){
               Song s = Song(readID3(str),str);
-              if(s.get_ID3().title[0] == '\0' || s.get_ID3().header == ""){
+              if(s.get_ID3().title[0] == '\0' || s.get_ID3().header[0] == '\0'){
                 s.set_ID3v2(readID3v2(str)); 
-                cout<<s.get_ID3v2().frames["TIT2"].data<<endl;
+//                cout<<s.get_ID3v2().frames["TIT2"].data<<endl;
               }
               this->push_back(s);
-              string title;
-              title += s.get_ID3().title; 
+//              string title;
+//              title += s.get_ID3().title; 
              // title += "\0";
                
-              cout<<s.get_ID3().header[0]<<" "<<title<<"----"<<str<<endl;
+//              cout<<s.get_ID3().header[0]<<" "<<title<<"----"<<str<<endl;
             }
              
           }

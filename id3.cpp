@@ -12,6 +12,7 @@ ID3v1 readID3(string file){
     }
 
     char header[3]="";
+   // id3.title[0]='\0';
     infile.read(header,3);
     if(header[0] != 'T' || header[1] != 'A' || header[2] != 'G'){
       return id3;
