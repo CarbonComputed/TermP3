@@ -1,5 +1,5 @@
 #
-# Created by makemake (Darwin Feb 22 2012) on Mon Mar 12 11:27:59 2012
+# Created by makemake (Darwin Feb 22 2012) on Fri Mar 23 14:01:43 2012
 #
 
 #
@@ -44,11 +44,11 @@ CXXFLAGS =	-ggdb -Wall -ansi -pedantic
 CFLAGS =	-ggdb -Wall -ansi -pedantic
 BINDIR =.
 CLIBFLAGS =	-lm
-CCLIBFLAGS =	
+CCLIBFLAGS = -lncurses -lmenu	
 ########## End of default flags
 
 
-CPP_FILES =	id3.cpp library.cpp main.cpp music_list.cpp play_queue.cpp playlist.cpp song.cpp
+CPP_FILES =	id3.cpp library.cpp main.cpp main_window.cpp music_list.cpp play_queue.cpp playlist.cpp song.cpp
 C_FILES =	
 S_FILES =	
 H_FILES =	defines.h id3.h library.h music_list.h play_queue.h playlist.h song.h
@@ -60,23 +60,28 @@ OBJFILES =	id3.o library.o music_list.o play_queue.o playlist.o song.o
 # Main targets
 #
 
-all:	${BINDIR}/main 
+all:	${BINDIR}/main ${BINDIR}/main_window 
 
 ${BINDIR}/main:	main.o $(OBJFILES)
 	@mkdir -p ${BINDIR}/
 	$(CXX) $(CXXFLAGS) -o ${BINDIR}/main main.o $(OBJFILES) $(CCLIBFLAGS)
+
+${BINDIR}/main_window:	main_window.o $(OBJFILES)
+	@mkdir -p ${BINDIR}/
+	$(CXX) $(CXXFLAGS) -o ${BINDIR}/main_window main_window.o $(OBJFILES) $(CCLIBFLAGS)
 
 #
 # Dependencies
 #
 
 id3.o:	id3.h
-library.o:	defines.h id3/id3.h library.h music_list.h song.h
-main.o:	defines.h id3/id3.h library.h music_list.h song.h
-music_list.o:	id3/id3.h music_list.h song.h
-play_queue.o:	id3/id3.h music_list.h play_queue.h song.h
-playlist.o:	id3/id3.h music_list.h playlist.h song.h
-song.o:	id3/id3.h song.h
+library.o:	defines.h id3.h library.h music_list.h song.h
+main.o:	defines.h id3.h library.h music_list.h song.h
+main_window.o:	id3.h song.h
+music_list.o:	id3.h music_list.h song.h
+play_queue.o:	id3.h music_list.h play_queue.h song.h
+playlist.o:	id3.h music_list.h playlist.h song.h
+song.o:	id3.h song.h
 
 #
 # Housekeeping
@@ -88,7 +93,7 @@ archive.tgz:	$(SOURCEFILES) Makefile
 	tar cf - $(SOURCEFILES) Makefile | gzip > archive.tgz
 
 clean:
-	-/bin/rm $(OBJFILES) main.o core 2> /dev/null
+	-/bin/rm $(OBJFILES) main.o main_window.o core 2> /dev/null
 
 realclean:        clean
-	-/bin/rm -rf ${BINDIR}/main 
+	-/bin/rm -rf ${BINDIR}/main ${BINDIR}/main_window 
