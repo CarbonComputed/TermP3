@@ -22,6 +22,8 @@ int Library::scan(){
   unsigned char is_folder = 0x4;
   vector<string> stack_sim;
   vector<string>::iterator path;
+  char* default_dir = getcwd(NULL,0);
+  
   for(path = search_paths_.begin(); path != search_paths_.end(); path++){
     DIR* dp = NULL;
     if((dp = opendir((*path).c_str())) == NULL) {
@@ -74,6 +76,7 @@ int Library::scan(){
 //        dp = NULL;
     }
 }
-
+  chdir(default_dir);
+  delete default_dir;
   return 1; 
 }

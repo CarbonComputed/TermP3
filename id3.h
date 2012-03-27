@@ -46,7 +46,7 @@ struct ID3v2{
 
 ID3v1 readID3(string file);
 ID3v2_header readID3v2_head(ifstream& infile);
-ID3v2_frame readID3v2_frame(ifstream& infile);
+ID3v2_frame readID3v2_frame(ID3v2& id3,ifstream& infile);
 ID3v2 readID3v2(string file);
 #endif
 

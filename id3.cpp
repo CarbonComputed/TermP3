@@ -1,11 +1,15 @@
 #include "id3.h"
 #include <iostream>
+#include <cstdlib>
 using namespace std;
 
 ID3v1 readID3(string file){
     ifstream infile(file.c_str(),ios::binary);
     infile.seekg(-128,ios::end);
     ID3v1 id3;
+    id3.title[0] = '\0';
+    id3.artist[0] = '\0';
+    id3.album[0] = '\0';
     if(!infile){
         infile.close();
         return id3; 
@@ -41,6 +45,12 @@ ID3v1 readID3(string file){
  
 }
 
+int to_int_32(char* bytes){
+  int Int32 = 0;
+  Int32 = ((int)bytes[2]) + ((int)bytes[1] << 8) + ((int)bytes[0]<<16);
+  return Int32;
+}
+
 int syncsafe(int i)
 {
  int toReturn = 0;
@@ -61,30 +71,55 @@ ID3v2 readID3v2(string file){
   id3.head = head;  
   int ctr = 0;
   while(ctr <= head.size){
-    ID3v2_frame frame = readID3v2_frame(infile);
+    ID3v2_frame frame = readID3v2_frame(id3,infile);
 //    cout<<frame.id<<endl;
 //    cout<<frame.data<<endl;
     ctr += frame.size;
-    ctr += 10;
+    if((int)id3.head.version <=2){
+      ctr+=6;
+    }
+    else{
+      ctr += 10;
+    }
     if(frame.size < 1){
       break;
     }
     string s;
     s += frame.id;
-    id3.frames[s.substr(0,4)] =  frame;
+    if((int)id3.head.version <=2){
+      id3.frames[s.substr(0,3)] = frame;
+    }
+    else{
+      id3.frames[s.substr(0,4)] =  frame;
+    }
   }
   infile.close();
   return id3;
 }
 
-ID3v2_frame readID3v2_frame(ifstream& infile){
+ID3v2_frame readID3v2_frame(ID3v2& id3, ifstream& infile){
   ID3v2_frame frame;
-  infile.read(frame.id,4);
-  int size;
-  infile.read(reinterpret_cast<char*>(&size), sizeof(size));
-  frame.size = size;
-  frame.size=syncsafe(frame.size);
-  infile.read(frame.flags,2);
+  if(((int)id3.head.version) <= 2){
+    infile.read(frame.id,3);
+//    cout<<frame.id<<endl;
+    int size;
+    char b[3];
+    infile.read(b,3);
+    //infile.read(reinterpret_cast<char*>(&size),3);
+   // int32_t s = size;
+    frame.size = to_int_32(b);
+//    cout<<frame.size<<endl;
+    //frame.size = syncsafe(size);
+  }
+  else{
+    infile.read(frame.id,4);
+    int size;
+    infile.read(reinterpret_cast<char*>(&size), sizeof(size));
+    frame.size = size;
+    frame.size=syncsafe(frame.size);
+    infile.read(frame.flags,2);
+
+  }
   int tempsize = frame.size;
   if(tempsize < 1 || tempsize > 1000){
     return frame;

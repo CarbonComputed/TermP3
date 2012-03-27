@@ -126,52 +126,47 @@ int read_line(char input,char *buffer){
 void init_song_menu(vector<Song>& songs){
   int nsongs = (int) songs.size();
   ITEM** items = (ITEM **)calloc(nsongs, sizeof(ITEM *));
-  ofstream file("/home/kevin/songs.txt");
-  if(!file){
-    printw(" ");
-    printw(strerror(errno));
-    printw(" ");
-  }
-  file << flush;
   printw("%d  ",nsongs);
   for(int i = 0; i < nsongs; ++i){
     string choice;
     stringstream out;
-    out << i;
-    out << " ";
+ //   out << i;
+ //   out << " ";
     string title;
-    title += songs.at(i).get_ID3().title;
-    if(title.length() <= 0){
-      title += songs.at(i).get_ID3v2().frames["TIT2"].data;
-      if(title.length() <= 0){
-        title += songs.at(i).get_path();
-      }
-    }
+    int width=0;
+    title += songs.at(i).get_title();
     title = title.substr(0,30);
-    out << title << setw(45- (out.str().length()+title.length()));
+    title.erase(std::remove_if(title.begin(),title.end(),InvalidChar()), title.end());
+    choice += out.str();
+    width = 45- (choice.length()+title.length());
+    out << title << setw(width);
     out << " | ";
     string artist;
-    artist += songs.at(i).get_ID3().artist;
-    out << artist.substr(0,30);
-//    out<<"|";
-//    out<<songs.at(i).get_ID3().artist;
+    artist += songs.at(i).get_artist();
+    artist = artist.substr(0,30);
+    artist.erase(std::remove_if(artist.begin(),artist.end(),InvalidChar()), artist.end());
+    width = 35 -artist.length();
+    out << artist << setw(width);
+    out<<" | ";
+    string album = songs.at(i).get_album();   
+    album.erase(std::remove_if(album.begin(),album.end(),InvalidChar()), album.end());
+    album = album.substr(0,30);
+    width = 35 -album.length();
+    out<<songs.at(i).get_album();
     choice += out.str();
     choice.erase(std::remove_if(choice.begin(),choice.end(),InvalidChar()), choice.end());
-    file << out.str().c_str();
-    file <<"\n"<<flush;
     char* cpy = new char[choice.size()+1];
     strcpy(cpy, choice.c_str());
     choices.push_back(cpy);
     items[i] = new_item(cpy," ");   
   }
-  file.close();
   items[nsongs-1] = new_item((char *)NULL, NULL);
   LSTWINDOW* menu_win = new LSTWINDOW;
   menu_win->win = newwin(LINES-2,COLS,2,COLS/4);
   menu_win->menu = new_menu((ITEM **)items);
   printw("%d", item_count(menu_win->menu));
   set_menu_win(menu_win->menu,menu_win->win);
-  set_menu_sub(menu_win->menu,derwin(menu_win->win,LINES-4,70 ,0,0));
+  set_menu_sub(menu_win->menu,derwin(menu_win->win,LINES-4,COLS ,0,0));
   set_menu_format(menu_win->menu,LINES-6,1);
   set_menu_mark(menu_win->menu,"*");
   wlist.push_back(menu_win->win);
