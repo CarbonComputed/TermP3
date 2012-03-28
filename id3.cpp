@@ -48,6 +48,7 @@ ID3v1 readID3(string file){
 int to_int_32(char* bytes){
   int Int32 = 0;
   Int32 = ((int)bytes[2]) + ((int)bytes[1] << 8) + ((int)bytes[0]<<16);
+  Int32 = Int32 & 0xff;
   return Int32;
 }
 
@@ -72,8 +73,8 @@ ID3v2 readID3v2(string file){
   int ctr = 0;
   while(ctr <= head.size){
     ID3v2_frame frame = readID3v2_frame(id3,infile);
-//    cout<<frame.id<<endl;
-//    cout<<frame.data<<endl;
+  //  cout<<frame.id<<endl;
+  //  cout<<frame.data<<endl;
     ctr += frame.size;
     if((int)id3.head.version <=2){
       ctr+=6;
@@ -108,7 +109,7 @@ ID3v2_frame readID3v2_frame(ID3v2& id3, ifstream& infile){
     //infile.read(reinterpret_cast<char*>(&size),3);
    // int32_t s = size;
     frame.size = to_int_32(b);
-//    cout<<frame.size<<endl;
+   //    cout<<frame.size<<endl;
     //frame.size = syncsafe(size);
   }
   else{
@@ -121,7 +122,8 @@ ID3v2_frame readID3v2_frame(ID3v2& id3, ifstream& infile){
 
   }
   int tempsize = frame.size;
-  if(tempsize < 1 || tempsize > 1000){
+//  cout <<tempsize<<endl;
+  if(tempsize >500000){
     return frame;
   }
   if(frame.id[0] == 'T'){

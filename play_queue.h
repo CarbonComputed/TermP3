@@ -11,6 +11,10 @@ class PlayQueue : MusicList{
  public:
    Song get_current() const;
    void set_current(const Song);
+   void play();
+   void pause();
+   void next();
+   void prev();
 
 };
 

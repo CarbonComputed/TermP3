@@ -23,7 +23,7 @@ int main(int args, char* argv[]){
   printf("%hhd\n", id32.head.version);
   cout<<(int)id32.head.version<<endl;
   cout << id31.title[1] <<endl; 
-  cout << id32.frames["TT2"].data<<endl;
+  cout << id32.frames["TPE1"].data<<endl;
    //lib.add_search_path("/home/kevin/Music");
 //    lib.scan();
 //    cout<<lib.size()<<endl;

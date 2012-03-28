@@ -10,7 +10,6 @@ class MusicList : public vector<Song>{
  public:
   void sort(const string);
 
-
 };
 
 #endif

@@ -19,7 +19,10 @@ class LSTWINDOW {
   public:
     WINDOW* win;
     MENU *menu;
+    ITEM** items;
+    int nitems;
 };
+
 struct InvalidChar
 {
     bool operator()(char c) const {
@@ -27,12 +30,14 @@ struct InvalidChar
     }
 };
 
-vector <WINDOW*> wlist;
+vector <LSTWINDOW*> wlist;
 LSTWINDOW* focused;
 vector<char*> choices;
+int state = 1;
 
 int read_line(char input, char*buffer);
 void init_song_menu(vector<Song>& songs);
+void handle_command(const string buffer);
 
 int main(int argc, char* argv[]){
   Library lib("kevin");
@@ -40,11 +45,13 @@ int main(int argc, char* argv[]){
   lib.scan(); 
   initscr();
   start_color();
+  assume_default_colors(COLOR_CYAN,COLOR_BLACK);
   cbreak();
   noecho();    
   keypad(stdscr, TRUE); 
   init_pair(1, COLOR_RED, COLOR_BLACK);
   init_pair(2, COLOR_CYAN, COLOR_BLACK);
+ // attron(COLOR_PAIR(2));
   refresh();
   init_song_menu(lib);
   post_menu(focused->menu);
@@ -52,7 +59,7 @@ int main(int argc, char* argv[]){
   refresh();
   int ch=0;
     
-  while(ch != KEY_F(1)){
+  while(ch != KEY_F(1) && state == 1){
     ch = getch();
     switch(ch){
       case KEY_DOWN:
@@ -66,6 +73,9 @@ int main(int argc, char* argv[]){
         int x = getcurx(stdscr);
         int y = getcury(stdscr);
         read_line(':',buf);
+        string buffer;
+        buffer += buf;
+        handle_command(buffer);
         deleteln();
         move(y,x);
         break;
@@ -73,8 +83,26 @@ int main(int argc, char* argv[]){
     wrefresh(focused->win);
   }
  // getch();
+  for(int x=0;x<wlist.size();x++){
+    unpost_menu(wlist.at(x)->menu);
+    free_menu(wlist.at(x)->menu);
+    for(int y=0;y<wlist.at(x)->nitems;y++){
+      free_item(wlist.at(x)->items[y]);
+      delete choices.at(y);
+    }
+  }
   endwin();  
 }
+
+
+void handle_command(const string buffer){
+  if(buffer == ":q"){
+    state = 0;
+    return;
+  }
+  state = 1;
+}
+
 
 int read_line(char input,char *buffer){
   string buf = "";
@@ -125,7 +153,10 @@ int read_line(char input,char *buffer){
 
 void init_song_menu(vector<Song>& songs){
   int nsongs = (int) songs.size();
+  LSTWINDOW* menu_win = new LSTWINDOW;
   ITEM** items = (ITEM **)calloc(nsongs, sizeof(ITEM *));
+  menu_win->items = items;
+  menu_win->nitems = nsongs;
   printw("%d  ",nsongs);
   for(int i = 0; i < nsongs; ++i){
     string choice;
@@ -160,8 +191,7 @@ void init_song_menu(vector<Song>& songs){
     choices.push_back(cpy);
     items[i] = new_item(cpy," ");   
   }
-  items[nsongs-1] = new_item((char *)NULL, NULL);
-  LSTWINDOW* menu_win = new LSTWINDOW;
+  items[nsongs] = new_item((char *)NULL, NULL);
   menu_win->win = newwin(LINES-2,COLS,2,COLS/4);
   menu_win->menu = new_menu((ITEM **)items);
   printw("%d", item_count(menu_win->menu));
@@ -169,7 +199,7 @@ void init_song_menu(vector<Song>& songs){
   set_menu_sub(menu_win->menu,derwin(menu_win->win,LINES-4,COLS ,0,0));
   set_menu_format(menu_win->menu,LINES-6,1);
   set_menu_mark(menu_win->menu,"*");
-  wlist.push_back(menu_win->win);
+  wlist.push_back(menu_win);
   focused = menu_win;    
   menu_opts_off(menu_win->menu,O_SHOWDESC);
 }
