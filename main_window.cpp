@@ -1,48 +1,9 @@
-#include <curses.h>
-#include <iomanip>
-#include <sstream>
-#include <fstream>
-#include <menu.h>
-#include <cstring>
-#include <string>
-#include <vector>
-#include <stdlib.h>
-#include <algorithm>
-#include <cerrno>
+#include "main_window.h"
 
-#include "song.h"
-#include "library.h"
+MainWindow::MainWindow(Manager model) : model_(model){
+}
 
-using namespace std;
-
-class LSTWINDOW {
-  public:
-    WINDOW* win;
-    MENU *menu;
-    ITEM** items;
-    int nitems;
-};
-
-struct InvalidChar
-{
-    bool operator()(char c) const {
-        return !isprint((unsigned)c);
-    }
-};
-
-vector <LSTWINDOW*> wlist;
-LSTWINDOW* focused;
-vector<char*> choices;
-int state = 1;
-
-int read_line(char input, char*buffer);
-void init_song_menu(vector<Song>& songs);
-void handle_command(const string buffer);
-
-int main(int argc, char* argv[]){
-  Library lib("kevin");
-  lib.add_search_path("/home/kevin/Music");
-  lib.scan(); 
+void MainWindow::display(){
   initscr();
   start_color();
   assume_default_colors(COLOR_CYAN,COLOR_BLACK);
@@ -53,13 +14,12 @@ int main(int argc, char* argv[]){
   init_pair(2, COLOR_CYAN, COLOR_BLACK);
  // attron(COLOR_PAIR(2));
   refresh();
-  init_song_menu(lib);
+  //init_song_menu(lib);
   post_menu(focused->menu);
   wrefresh(focused->win);
   refresh();
   int ch=0;
-    
-  while(ch != KEY_F(1) && state == 1){
+  while(ch != KEY_F(1) && STATE == 1){
     ch = getch();
     switch(ch){
       case KEY_DOWN:
@@ -67,6 +27,11 @@ int main(int argc, char* argv[]){
         break;
       case KEY_UP:
         menu_driver(focused->menu,REQ_UP_ITEM);
+        break;
+      case 10 :
+        deleteln();
+       // printw(lib.at(item_index(current_item(focused->menu))).get_path().c_str());
+        refresh();
         break;
       case ((int)':'):
         char buf[80];
@@ -95,16 +60,16 @@ int main(int argc, char* argv[]){
 }
 
 
-void handle_command(const string buffer){
+void MainWindow::handle_command(const string buffer){
   if(buffer == ":q"){
-    state = 0;
+    STATE = 0;
     return;
   }
-  state = 1;
+  STATE = 1;
 }
 
 
-int read_line(char input,char *buffer){
+int MainWindow::read_line(char input,char *buffer){
   string buf = "";
   buf += input;
   int pos = 1;
@@ -151,7 +116,10 @@ int read_line(char input,char *buffer){
   return OK;
 }
 
-void init_song_menu(vector<Song>& songs){
+void MainWindow::update(){
+}
+
+void MainWindow::init_song_menu(vector<Song>& songs){
   int nsongs = (int) songs.size();
   LSTWINDOW* menu_win = new LSTWINDOW;
   ITEM** items = (ITEM **)calloc(nsongs, sizeof(ITEM *));

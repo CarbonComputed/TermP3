@@ -26,7 +26,7 @@ class Song {
    string get_artist() const;
    string get_album() const;
    string get_length() const;
-
+   Song();
    Song(ID3v1 id3, string path);	
 };
 

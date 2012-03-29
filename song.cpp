@@ -1,5 +1,8 @@
 #include "song.h"
 
+Song::Song(){
+}
+
 Song::Song(ID3v1 id3,string path): id3_data_(id3), path_(path){
 }
 
