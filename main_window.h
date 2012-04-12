@@ -1,11 +1,17 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#if defined(__CYGWIN__)
+#include <ncurses/curses.h>
+#include <ncurses/menu.h>
+#else
 #include <curses.h>
+#include <curses.h>
+#endif
+
 #include <iomanip>
 #include <sstream>
 #include <fstream>
-#include <menu.h>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -35,7 +41,7 @@ struct InvalidChar
 
 class MainWindow: public Observer{
 
-Manager model_;
+Manager* model_;
 
 vector<char*> choices;
 vector<LSTWINDOW*> wlist;
@@ -47,7 +53,8 @@ void init_song_menu(vector <Song>& songs);
 void handle_command(const string buffer);
 
 public:
-  MainWindow(Manager model);
+  MainWindow(Manager& model);
+  void init();
   void display();
   void update();
 };

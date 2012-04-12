@@ -6,7 +6,7 @@
 
 #include "song.h"
 
-class MusicList : public vector<Song>{
+class MusicList : public vector<Song> {
  public:
   void sort(const string);
 

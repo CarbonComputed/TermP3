@@ -1,9 +1,12 @@
 #include "main_window.h"
+#include <iostream>
+using namespace std;
 
-MainWindow::MainWindow(Manager model) : model_(model){
+MainWindow::MainWindow(Manager& model) {
+  model_ = &model;
 }
 
-void MainWindow::display(){
+void MainWindow::init(){
   initscr();
   start_color();
   assume_default_colors(COLOR_CYAN,COLOR_BLACK);
@@ -12,9 +15,12 @@ void MainWindow::display(){
   keypad(stdscr, TRUE); 
   init_pair(1, COLOR_RED, COLOR_BLACK);
   init_pair(2, COLOR_CYAN, COLOR_BLACK);
- // attron(COLOR_PAIR(2));
   refresh();
-  //init_song_menu(lib);
+
+}
+
+void MainWindow::display(){
+  init_song_menu(model_->get_library());
   post_menu(focused->menu);
   wrefresh(focused->win);
   refresh();
@@ -117,6 +123,20 @@ int MainWindow::read_line(char input,char *buffer){
 }
 
 void MainWindow::update(){
+  
+//  cout<<model_.get_library().size()<<endl;
+//
+  refresh();
+  move(0,0);
+  deleteln();
+  printw("Scanning library... ");
+  printw("%d %",model_->get_library().get_percent_scanned());
+  if(model_->get_library().get_percent_scanned() == 100){
+    deleteln();
+    move(0,0);
+    display();
+  }
+  
 }
 
 void MainWindow::init_song_menu(vector<Song>& songs){
