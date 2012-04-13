@@ -61,7 +61,7 @@ int Library::get_total_files(){
     }
   }
   chdir(default_dir);
-  delete default_dir;
+  free (default_dir);
   return total;
 }
 
@@ -111,7 +111,7 @@ int Library::scan(){
               }
               count++;
               scanned_ = (float)count /(float) total;
-              notify_observers();
+              notify_observers(SCANNING);
               this->push_back(s);
 //              string title;
 //              title += s.get_ID3().title; 
@@ -132,6 +132,7 @@ int Library::scan(){
     }
 }
   chdir(default_dir);
-  delete default_dir;
+  free (default_dir);
+  notify_observers(SUCCESS);
   return 1; 
 }

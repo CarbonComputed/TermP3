@@ -20,23 +20,29 @@ void MainWindow::init(){
 }
 
 void MainWindow::display(){
+  clear();
+  init();
   init_song_menu(model_->get_library());
-  post_menu(focused->menu);
-  wrefresh(focused->win);
+  post_menu((focused)->menu);
+  wrefresh((focused)->win);
   refresh();
+  this->STATE = 1;
+//  move(0,0);
+//  deleteln();
+ // refresh();
   int ch=0;
   while(ch != KEY_F(1) && STATE == 1){
     ch = getch();
     switch(ch){
       case KEY_DOWN:
-        menu_driver(focused->menu,REQ_DOWN_ITEM);
+        menu_driver((focused)->menu,REQ_DOWN_ITEM);
         break;
       case KEY_UP:
-        menu_driver(focused->menu,REQ_UP_ITEM);
+        menu_driver((focused)->menu,REQ_UP_ITEM);
         break;
       case 10 :
         deleteln();
-       // printw(lib.at(item_index(current_item(focused->menu))).get_path().c_str());
+       // printw(lib.at(item_index(current_item((focused)->menu))).get_path().c_str());
         refresh();
         break;
       case ((int)':'):
@@ -51,17 +57,23 @@ void MainWindow::display(){
         move(y,x);
         break;
     }
-    wrefresh(focused->win);
+    wrefresh((focused)->win);
   }
- // getch();
+  
+  STATE = 0;
+   
   for(int x=0;x<wlist.size();x++){
-    unpost_menu(wlist.at(x)->menu);
-    free_menu(wlist.at(x)->menu);
     for(int y=0;y<wlist.at(x)->nitems;y++){
       free_item(wlist.at(x)->items[y]);
-      delete choices.at(y);
+      if(choices.at(y) != NULL){
+        delete choices.at(y);
+      }
     }
+    unpost_menu(wlist.at(x)->menu);
+    free_menu(wlist.at(x)->menu);
+    
   }
+  
   endwin();  
 }
 
@@ -122,27 +134,28 @@ int MainWindow::read_line(char input,char *buffer){
   return OK;
 }
 
-void MainWindow::update(){
+void MainWindow::update(int value){
   
 //  cout<<model_.get_library().size()<<endl;
 //
-  refresh();
-  move(0,0);
-  deleteln();
-  printw("Scanning library... ");
-  printw("%d %",model_->get_library().get_percent_scanned());
-  if(model_->get_library().get_percent_scanned() == 100){
-    deleteln();
-    move(0,0);
+//  refresh();
+  if(value == SUCCESS){
     display();
   }
-  
+  else{
+    move(0,0);
+    deleteln();
+    printw("Scanning library... ");
+    printw("%d%%",model_->get_library().get_percent_scanned());
+
+    refresh();
+  }
 }
 
 void MainWindow::init_song_menu(vector<Song>& songs){
   int nsongs = (int) songs.size();
   LSTWINDOW* menu_win = new LSTWINDOW;
-  ITEM** items = (ITEM **)calloc(nsongs, sizeof(ITEM *));
+  ITEM** items = (ITEM **)calloc(nsongs+1, sizeof(ITEM *));
   menu_win->items = items;
   menu_win->nitems = nsongs;
   printw("%d  ",nsongs);
@@ -179,7 +192,7 @@ void MainWindow::init_song_menu(vector<Song>& songs){
     choices.push_back(cpy);
     items[i] = new_item(cpy," ");   
   }
-  items[nsongs] = new_item((char *)NULL, NULL);
+  items[nsongs] = (ITEM *) NULL;
   menu_win->win = newwin(LINES-2,COLS,2,COLS/4);
   menu_win->menu = new_menu((ITEM **)items);
   printw("%d", item_count(menu_win->menu));
@@ -190,4 +203,8 @@ void MainWindow::init_song_menu(vector<Song>& songs){
   wlist.push_back(menu_win);
   focused = menu_win;    
   menu_opts_off(menu_win->menu,O_SHOWDESC);
+}
+
+int MainWindow::get_state() const{
+  return STATE;
 }

@@ -12,7 +12,7 @@ class Observable{
   vector<Observer*> observers;
 
  public:
-  virtual void notify_observers();
+  virtual void notify_observers(int value);
   virtual void add_observer(Observer& observer);
 
 };

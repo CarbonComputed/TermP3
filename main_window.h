@@ -56,7 +56,8 @@ public:
   MainWindow(Manager& model);
   void init();
   void display();
-  void update();
+  void update(int value);
+  int get_state() const;
 };
 
 

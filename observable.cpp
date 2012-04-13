@@ -1,9 +1,9 @@
 #include "observable.h"
 
-void Observable::notify_observers(){
+void Observable::notify_observers(int value){
   vector<Observer*>::iterator observer;
   for(observer = observers.begin();observer != observers.end(); observer++){
-    (*observer)->update();
+    (*observer)->update(value);
   }
 }
 

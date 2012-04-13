@@ -20,7 +20,9 @@ int main(int argc, char* argv[]){
   MainWindow main_window(music_manager);
   music_manager.add_observer(main_window);
   music_manager.get_library().add_observer(main_window);
-  music_manager.get_library().add_search_path("/home/kevin/Music");
+  music_manager.get_library().add_search_path("/home/kevin/Music/Kanye West");
+  music_manager.get_library().add_search_path("/home/kevin/Music/Saved");
+  music_manager.get_library().add_search_path("/home/kevin/Music/Paramore");
   main_window.init();
   pthread_t scanner;
   int rc = pthread_create(&scanner,NULL,scan_library,(void*) &music_manager);
@@ -29,8 +31,11 @@ int main(int argc, char* argv[]){
     printw("ERROR creating thread %d\n",rc);
     return -1;
   }
-  while(true){
+  while(main_window.get_state() != 0){
   }
+  //cout<<"Exiting"<<endl;
+  sleep(1);
+  pthread_exit(NULL);
  // getch();
-  endwin();
+ // endwin();
  }
