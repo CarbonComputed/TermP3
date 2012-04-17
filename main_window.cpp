@@ -41,19 +41,26 @@ void MainWindow::display(){
         menu_driver((focused)->menu,REQ_UP_ITEM);
         break;
       case 10 :
-        deleteln();
-       // printw(lib.at(item_index(current_item((focused)->menu))).get_path().c_str());
-        refresh();
+       // deleteln();
+        model_->get_playqueue().play(item_index(current_item((focused)->menu)));
+        //move(LINES-2,1);
+        //deleteln();
+        //init();
+        //printw(model_->get_playqueue().at(item_index(current_item((focused)->menu))).get_path().c_str());
+        //refresh();
+        //init();
         break;
       case ((int)':'):
-        char buf[80];
+        char buf[80]="";
         int x = getcurx(stdscr);
         int y = getcury(stdscr);
         read_line(':',buf);
-        string buffer;
+        string buffer="";
         buffer += buf;
         handle_command(buffer);
-        deleteln();
+        move(LINES-1,0);
+        clrtoeol();
+       // deleteln();
         move(y,x);
         break;
     }
@@ -82,6 +89,15 @@ void MainWindow::handle_command(const string buffer){
   if(buffer == ":q"){
     STATE = 0;
     return;
+  }
+  if(buffer==":p"){
+    model_->get_playqueue().pause();
+  }
+  if(buffer==":next"){
+    model_->get_playqueue().next();
+  }
+  if(buffer==":prev"){
+    model_->get_playqueue().prev();
   }
   STATE = 1;
 }
@@ -135,19 +151,36 @@ int MainWindow::read_line(char input,char *buffer){
 }
 
 void MainWindow::update(int value){
-  
-//  cout<<model_.get_library().size()<<endl;
-//
-//  refresh();
   if(value == SUCCESS){
+    for(int x=0;x<model_->get_library().size();x++){
+      model_->get_playqueue().push_back(model_->get_library().at(x));
+    }
     display();
+  }
+  else if(value == REFRESH){
+    if(model_->get_playqueue().get_current() != NULL){
+      int x = getcurx(stdscr);
+      int y = getcury(stdscr);
+      move(LINES-2,1);
+      clrtoeol();
+      string str = "";
+      str += model_->get_playqueue().get_current()->get_title().substr(0,30);
+      str += "     ";
+      str += model_->get_playqueue().get_song_position();
+      str += "/";
+      str += model_->get_playqueue().get_song_length();
+      printw(str.c_str());
+      move(y,x);
+      refresh();
+    }
+
+    
   }
   else{
     move(0,0);
     deleteln();
     printw("Scanning library... ");
     printw("%d%%",model_->get_library().get_percent_scanned());
-
     refresh();
   }
 }

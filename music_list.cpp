@@ -3,3 +3,6 @@
 void MusicList::sort(const string str){
 
 }
+
+void MusicList::sort(){
+}

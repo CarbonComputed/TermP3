@@ -7,5 +7,6 @@
 #define E_ADD 3
 #define E_DELETE 4
 #define SCANNING 5
+#define REFRESH 6
 
 #endif

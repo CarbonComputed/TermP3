@@ -1,5 +1,5 @@
 #
-# Created by makemake (Darwin Feb 22 2012) on Wed Mar 28 21:50:21 2012
+# Created by makemake (Darwin Feb 22 2012) on Sun Apr  1 23:51:52 2012
 #
 
 #
@@ -44,11 +44,11 @@ CXXFLAGS =	-ggdb -Wall -ansi -pedantic
 CFLAGS =	-ggdb -Wall -ansi -pedantic
 BINDIR =.
 CLIBFLAGS =	-lm
-CCLIBFLAGS = -lncurses -lmenu	
+CCLIBFLAGS = -lncurses -lmenu -lpthread 	
 ########## End of default flags
 
 
-CPP_FILES =	id3.cpp library.cpp main.cpp main_window.cpp manager.cpp music_list.cpp observable.cpp play_queue.cpp playlist.cpp song.cpp termp3.cpp
+CPP_FILES =	id3.cpp library.cpp main_window.cpp manager.cpp music_list.cpp observable.cpp play_queue.cpp playlist.cpp song.cpp termp3.cpp
 C_FILES =	
 S_FILES =	
 H_FILES =	defines.h id3.h library.h main_window.h manager.h music_list.h observable.h observer.h play_queue.h playlist.h song.h
@@ -60,31 +60,26 @@ OBJFILES =	id3.o library.o main_window.o manager.o music_list.o observable.o pla
 # Main targets
 #
 
-all:	${BINDIR}/main ${BINDIR}/termp3 
-
-${BINDIR}/main:	main.o $(OBJFILES)
-	@mkdir -p ${BINDIR}/
-	$(CXX) $(CXXFLAGS) -o ${BINDIR}/main main.o $(OBJFILES) $(CCLIBFLAGS)
+all:	${BINDIR}/termp3 
 
 ${BINDIR}/termp3:	termp3.o $(OBJFILES)
 	@mkdir -p ${BINDIR}/
-	$(CXX) $(CXXFLAGS) -o ${BINDIR}/termp3 termp3.o $(OBJFILES) $(CCLIBFLAGS)
+	$(CXX) $(CXXFLAGS) -o ${BINDIR}/termp3 termp3.o $(OBJFILES) $(CCLIBFLAGS) -I"irrKlang-1.3.0/include" -L"/usr/lib" irrKlang-1.3.0/lib/Win32-gcc/libirrKlang.a
 
 #
 # Dependencies
 #
 
 id3.o:	id3.h
-library.o:	defines.h id3.h library.h music_list.h song.h
-main.o:	defines.h id3.h library.h music_list.h song.h
-main_window.o:	defines.h id3.h library.h main_window.h music_list.h observer.h song.h
+library.o:	defines.h id3.h library.h music_list.h observable.h observer.h song.h
+main_window.o:	defines.h id3.h library.h main_window.h manager.h music_list.h observable.h observer.h play_queue.h playlist.h song.h
 manager.o:	defines.h id3.h library.h manager.h music_list.h observable.h observer.h play_queue.h playlist.h song.h
 music_list.o:	id3.h music_list.h song.h
 observable.o:	observable.h observer.h
 play_queue.o:	id3.h music_list.h play_queue.h song.h
 playlist.o:	id3.h music_list.h playlist.h song.h
 song.o:	id3.h song.h
-termp3.o:	defines.h id3.h library.h main_window.h music_list.h observer.h song.h
+termp3.o:	defines.h id3.h library.h main_window.h manager.h music_list.h observable.h observer.h play_queue.h playlist.h song.h
 
 #
 # Housekeeping
@@ -96,7 +91,7 @@ archive.tgz:	$(SOURCEFILES) Makefile
 	tar cf - $(SOURCEFILES) Makefile | gzip > archive.tgz
 
 clean:
-	-/bin/rm $(OBJFILES) main.o termp3.o core 2> /dev/null
+	-/bin/rm $(OBJFILES) termp3.o core 2> /dev/null
 
 realclean:        clean
-	-/bin/rm -rf ${BINDIR}/main ${BINDIR}/termp3 
+	-/bin/rm -rf ${BINDIR}/termp3 

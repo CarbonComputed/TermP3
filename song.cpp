@@ -4,6 +4,7 @@ Song::Song(){
 }
 
 Song::Song(ID3v1 id3,string path): id3_data_(id3), path_(path){
+  path_.replace(0,11,"F:");
 }
 
 string Song::get_path() const{
